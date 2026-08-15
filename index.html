@@ -1,11 +1,169 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
-</head>
-<body>
-    
-</body>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Frostpunk Weather Hive</title>
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body>
+    <div class="app-shell">
+      <header class="top-scene panel-surface">
+        <div class="generator-column">
+          <div class="generator">
+            <div class="generator-core"></div>
+            <div class="generator-glow"></div>
+          </div>
+        </div>
+
+        <div class="city-visual">
+          <div class="sky-veil"></div>
+          <div class="city-backdrop"></div>
+          <div class="city-silhouette"></div>
+        </div>
+      </header>
+
+      <main class="content-grid">
+        <section class="mine-panel panel-surface">
+          <div class="panel-header">
+            <span>Coal Mine</span>
+            <span class="chip">Frostline 9</span>
+          </div>
+
+          <div class="mine-body">
+            <button id="coalClicker" class="coal-clicker" aria-label="Mine coal">
+              <span class="coal-inner"></span>
+            </button>
+
+            <div class="resource-panel">
+              <div class="stat">
+                <label>Coal</label>
+                <strong id="coalCount">0</strong>
+              </div>
+              <div class="stat">
+                <label>Thermostamps</label>
+                <strong id="thermoCount">0</strong>
+              </div>
+              <div class="stat">
+                <label>Mining rate</label>
+                <strong id="mineRate">1 / click</strong>
+              </div>
+            </div>
+          </div>
+
+          <div class="upgrade-row">
+            <button class="upgrade-btn" data-upgrade="drill">
+              <span>Steam drill</span>
+              <small>cost: 25</small>
+            </button>
+            <button class="upgrade-btn" data-upgrade="lamp">
+              <span>Warm lamp</span>
+              <small>cost: 50</small>
+            </button>
+            <button class="upgrade-btn" data-upgrade="dust">
+              <span>Coal dust mix</span>
+              <small>cost: 80</small>
+            </button>
+          </div>
+        </section>
+
+        <aside class="shop-panel panel-surface">
+          <div class="panel-header">
+            <span>Kitchen & Depot</span>
+            <span class="chip">Supplies</span>
+          </div>
+
+          <div class="shop-list">
+            <div class="shop-item" data-shop="porridge">
+              <div class="thumb porridge"></div>
+              <div class="item-copy">
+                <strong>Cinder Porridge</strong>
+                <span>+1 auto coal / sec</span>
+              </div>
+              <button class="buy-btn">15</button>
+            </div>
+
+            <div class="shop-item" data-shop="boots">
+              <div class="thumb boots"></div>
+              <div class="item-copy">
+                <strong>Insulated Boots</strong>
+                <span>+2 mining power</span>
+              </div>
+              <button class="buy-btn">35</button>
+            </div>
+
+            <div class="shop-item" data-shop="gloves">
+              <div class="thumb gloves"></div>
+              <div class="item-copy">
+                <strong>Forge Gloves</strong>
+                <span>+10% click bonus</span>
+              </div>
+              <button class="buy-btn">60</button>
+            </div>
+          </div>
+        </aside>
+
+        <section class="weather-panel panel-surface">
+          <div class="weather-header">
+            <span>Forecast lattice</span>
+            <span class="chip">Polar orbit</span>
+          </div>
+
+          <div class="weather-grid">
+            <article class="weather-card antarctica">
+              <div class="planet-tag">Antarctica</div>
+              <h3>Glacial Drift</h3>
+              <ul>
+                <li>Temp: -24°C</li>
+                <li>Wind: 29 km/h</li>
+                <li>Sky: pale snow</li>
+              </ul>
+            </article>
+
+            <article class="weather-card sky">
+              <div class="planet-tag">Upper Sky</div>
+              <h3>Rime Horizon</h3>
+              <ul>
+                <li>Temp: -8°C</li>
+                <li>Cloud: dense</li>
+                <li>Light: dim</li>
+              </ul>
+            </article>
+
+            <article class="weather-card space">
+              <div class="planet-tag">Deep Space</div>
+              <h3>Cold Vacuum</h3>
+              <ul>
+                <li>Temp: -270°C</li>
+                <li>Dust: low</li>
+                <li>View: clear</li>
+              </ul>
+            </article>
+
+            <article class="weather-card mars">
+              <div class="planet-tag">Mars</div>
+              <h3>Red Mirage</h3>
+              <ul>
+                <li>Temp: -60°C</li>
+                <li>Wind: 14 km/h</li>
+                <li>Sand: active</li>
+              </ul>
+            </article>
+
+            <article class="weather-card moon">
+              <div class="planet-tag">Moon</div>
+              <h3>Dead Silence</h3>
+              <ul>
+                <li>Temp: -150°C</li>
+                <li>Crater: 32%</li>
+                <li>Light: lunar</li>
+              </ul>
+            </article>
+          </div>
+        </section>
+      </main>
+    </div>
+
+    <script src="main.js"></script>
+  </body>
 </html>
