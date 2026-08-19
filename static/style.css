@@ -1,19 +1,9 @@
 :root {
-  --bg: #050a10;
-  --bg-2: #101d27;
-  --panel: rgba(12, 16, 22, 0.82);
-  --panel-2: rgba(18, 22, 29, 0.9);
-  --panel-3: rgba(23, 28, 34, 0.9);
   --border: rgba(220, 224, 232, 0.2);
   --border-strong: rgba(255, 255, 255, 0.26);
   --text: #edf3f9;
   --muted: rgba(222, 231, 243, 0.72);
-  --steel: #7e8a98;
-  --steel-deep: #161b22;
   --warm: #d88b43;
-  --warm-soft: rgba(216, 139, 67, 0.32);
-  --ice: #a6b7c4;
-  --dust: #7d6f62;
   --shadow: 0 12px 40px rgba(0, 0, 0, 0.45);
 }
 
@@ -109,162 +99,21 @@ body::before {
 }
 
 .hero-scene {
+  position: relative;
+  width: 100%;
   height: 100vh;
   min-height: 720px;
+  margin: 0;
   background: linear-gradient(180deg, rgba(13, 17, 22, 0.7), rgba(6, 10, 14, 0.8));
 }
 
 .hero-backdrop {
   position: absolute;
   inset: 0;
-  background:
-    radial-gradient(circle at 50% 18%, rgba(255, 170, 95, 0.38), rgba(255, 170, 95, 0.12) 10%, transparent 27%),
-    linear-gradient(180deg, #2a3e4a 0%, #4d6b7b 16%, #7d8a96 30%, #aeb8bd 40%, #d2d7db 100%);
+  background-image: linear-gradient(180deg, rgba(4, 9, 15, 0.12), rgba(4, 8, 12, 0.58)), url("images/generator.jpg");
+  background-position: center;
+  background-size: cover;
   overflow: hidden;
-}
-
-.city-glow {
-  position: absolute;
-  inset: 0;
-  background: radial-gradient(circle at 50% 16%, rgba(255, 150, 62, 0.22), transparent 16%);
-}
-
-.city-silhouette {
-  position: absolute;
-  inset: 10% 0 0;
-}
-
-.tower,
-.house,
-.warehouse {
-  position: absolute;
-  display: block;
-  background: linear-gradient(180deg, rgba(30, 37, 42, 0.94), rgba(6, 10, 13, 0.96));
-  border: 1px solid rgba(255,255,255,0.08);
-  box-shadow: 0 0 12px rgba(0,0,0,0.25);
-}
-
-.tower {
-  bottom: 18%;
-  width: 6vw;
-  min-width: 50px;
-  max-width: 110px;
-  border-radius: 20px 20px 0 0;
-}
-
-.tower-one { left: 20%; height: 26%; }
-.tower-two { left: 56%; height: 20%; }
-.tower-three { left: 72%; height: 16%; }
-
-.house {
-  bottom: 20%;
-  height: 12%;
-  border-radius: 8px 8px 0 0;
-}
-.house-a { left: 8%; width: 12%; }
-.house-b { left: 22%; width: 14%; height: 14%; }
-.house-c { left: 38%; width: 10%; }
-.house-d { left: 52%; width: 11%; }
-.house-e { left: 66%; width: 12%; }
-.house-f { left: 80%; width: 10%; }
-
-.warehouse {
-  left: 46%;
-  bottom: 18%;
-  width: 22%;
-  height: 22%;
-  border-radius: 12px 12px 0 0;
-}
-
-.generator {
-  position: absolute;
-  left: 50%;
-  bottom: 18%;
-  transform: translateX(-50%);
-  width: min(38vw, 360px);
-  height: min(54vw, 500px);
-  min-height: 260px;
-  border-radius: 28px 28px 30px 30px;
-  background: linear-gradient(180deg, rgba(12, 16, 20, 0.75), rgba(5,7,10,0.96));
-  box-shadow: inset 0 0 24px rgba(255,144,58,0.12), 0 14px 24px rgba(0,0,0,0.35);
-  border: 1px solid rgba(255,255,255,0.08);
-}
-
-.generator::before,
-.generator::after {
-  content: "";
-  position: absolute;
-  inset: 10% 18% auto 18%;
-  height: 24%;
-  border: 2px solid rgba(255,255,255,0.09);
-  border-radius: 50%;
-}
-
-.generator::after {
-  inset: 22% 25% auto 25%;
-  height: 12%;
-}
-
-.generator-core {
-  position: absolute;
-  left: 50%;
-  bottom: 18%;
-  transform: translateX(-50%);
-  width: 58%;
-  height: 68%;
-  border-radius: 50% 50% 18% 18% / 26% 26% 10% 10%;
-  background: radial-gradient(circle at 50% 35%, rgba(255, 140, 70, 0.26), rgba(18, 17, 16, 0.96) 18%, rgba(7,9,12,0.95) 62%);
-  box-shadow: inset 0 0 20px rgba(255, 198, 113, 0.18), 0 0 36px rgba(255,136,50,0.18);
-}
-
-.flame {
-  position: absolute;
-  left: 50%;
-  top: 8%;
-  width: 44%;
-  height: 52%;
-  transform: translateX(-50%);
-  border-radius: 50% 50% 46% 46% / 68% 68% 32% 32%;
-  background: radial-gradient(circle at 50% 32%, #ffeab5 0%, #ffb65f 18%, #d77d35 38%, rgba(95, 20, 0, 0.8) 70%, transparent 100%);
-  box-shadow: 0 0 28px rgba(255, 146, 48, 0.6), 0 0 68px rgba(255, 114, 20, 0.22);
-  animation: flicker 2.2s infinite ease-in-out;
-}
-
-.pipe {
-  position: absolute;
-  display: block;
-  background: linear-gradient(180deg, rgba(46,49,57,0.8), rgba(10,13,18,1));
-  border: 1px solid rgba(255,255,255,0.1);
-}
-
-.pipe-a { left: 28%; top: 14%; width: 12%; height: 38%; border-radius: 18px; }
-.pipe-b { right: 28%; top: 14%; width: 12%; height: 38%; border-radius: 18px; }
-.pipe-c { left: 46%; top: 0; width: 8%; height: 48%; border-radius: 18px; }
-
-.smoke,
-.smoke-drift {
-  position: absolute;
-  border-radius: 50%;
-  background: rgba(255,255,255,0.15);
-  filter: blur(8px);
-  animation: rise 12s linear infinite;
-}
-
-.smoke-a { left: 32%; bottom: 38%; width: 50px; height: 50px; }
-.smoke-b { left: 52%; bottom: 47%; width: 62px; height: 62px; animation-delay: 3s; }
-.smoke-c { left: 64%; bottom: 40%; width: 44px; height: 44px; animation-delay: 6s; }
-
-.snow-field,
-.city-snow {
-  position: absolute;
-  inset: 0;
-  background-image:
-    radial-gradient(circle, rgba(255,255,255,0.7) 0 1px, transparent 1.5px),
-    radial-gradient(circle, rgba(255,255,255,0.45) 0 1px, transparent 1.8px);
-  background-size: 140px 140px;
-  background-position: 0 0, 30px 40px;
-  animation: slowDrift 16s linear infinite;
-  opacity: 0.8;
 }
 
 .hud-panel {
@@ -304,114 +153,31 @@ body::before {
   letter-spacing: 0.08em;
 }
 
-.sectionLabel, .section-label, .section-subtitle {
+.section-label, .section-subtitle {
   letter-spacing: 0.12em;
   text-transform: uppercase;
 }
 
 .mine-section {
+  position: relative;
+  background: #000;
   display: grid;
   grid-template-columns: 1.35fr 0.9fr;
   gap: 28px;
   align-items: center;
-  max-width: 1500px;
-  margin: 0 auto;
+  width: 100%;
+  margin: 0;
   padding: 35px 28px 20px;
   min-height: 760px;
 }
 
-.panel-surface {
-  background: linear-gradient(180deg, rgba(11, 17, 24, 0.75), rgba(7, 11, 15, 0.92));
-  border: 1px solid rgba(255,255,255,0.1);
-  box-shadow: inset 0 0 18px rgba(255,255,255,0.03), var(--shadow);
-  position: relative;
-}
-
-.panel-surface::before {
-  content: "";
-  position: absolute;
-  inset: 10px;
-  border: 1px solid rgba(255,255,255,0.04);
-  pointer-events: none;
-}
-
 .mine-visual {
+  position: relative;
   min-height: 680px;
   border-radius: 26px;
   overflow: hidden;
-  background: linear-gradient(180deg, rgba(27, 29, 35, 0.92), rgba(11, 13, 16, 0.98));
+  background: #000;
 }
-
-.mine-bg {
-  position: absolute;
-  inset: 0;
-  background:
-    linear-gradient(180deg, rgba(23, 23, 28, 0.18), rgba(7, 10, 12, 0.86)),
-    radial-gradient(circle at 35% 24%, rgba(255, 132, 60, 0.15), transparent 20%),
-    linear-gradient(90deg, rgba(218, 219, 222, 0.02), rgba(255,255,255,0.03), rgba(0,0,0,0.08));
-}
-
-.mine-structure {
-  position: absolute;
-  inset: 0;
-}
-
-.beam {
-  position: absolute;
-  display: block;
-  width: 14px;
-  height: 62%;
-  background: linear-gradient(180deg, rgba(144,126,96,0.8), rgba(49,42,35,0.9));
-  border-radius: 10px;
-  box-shadow: 0 0 10px rgba(0,0,0,0.36);
-}
-
-.beam-1 { left: 18%; top: 10%; }
-.beam-2 { left: 48%; top: 14%; }
-.beam-3 { right: 18%; top: 8%; }
-
-.lamp {
-  position: absolute;
-  width: 14px;
-  height: 14px;
-  border-radius: 50%;
-  background: radial-gradient(circle, rgba(255,220,170,0.85), rgba(214,150,84,0.4) 40%, transparent 70%);
-  box-shadow: 0 0 18px rgba(255,166,68,0.38);
-  animation: flicker 2s infinite ease-in-out;
-}
-
-.lamp-1 { left: 24%; top: 22%; }
-.lamp-2 { right: 24%; top: 20%; }
-
-.cart {
-  position: absolute;
-  bottom: 18%;
-  width: 120px;
-  height: 52px;
-  border-radius: 12px;
-  background: linear-gradient(180deg, rgba(80, 74, 68, 0.78), rgba(24, 24, 24, 0.96));
-  border: 1px solid rgba(255,255,255,0.08);
-}
-
-.cart::before {
-  content: "";
-  position: absolute;
-  left: 10px; right: 10px; top: 16px; height: 12px; border-radius: 8px; background: rgba(0,0,0,0.3);
-}
-
-.cart-1 { left: 12%; }
-.cart-2 { right: 12%; }
-
-.smoke-drift {
-  bottom: 18%;
-  width: 140px;
-  height: 50px;
-  background: rgba(200,205,210,0.08);
-  filter: blur(18px);
-}
-
-.smoke-drift-1 { left: 18%; }
-.smoke-drift-2 { right: 18%; }
 
 .mine-panel {
   min-height: 680px;
@@ -603,13 +369,15 @@ body::before {
 }
 
 .kitchen-section {
+  position: relative;
+  background: #000;
   display: grid;
   grid-template-columns: 1.25fr 0.75fr;
-  max-width: 1500px;
-  margin: 0 auto;
+  width: 100%;
+  margin: 0;
   min-height: 520px;
   padding: 32px 28px;
-  border-radius: 26px;
+  border-radius: 0;
   gap: 30px;
   align-items: center;
 }
@@ -619,69 +387,9 @@ body::before {
   min-height: 440px;
   border-radius: 24px;
   overflow: hidden;
-  background: linear-gradient(180deg, rgba(30, 22, 14, 0.86), rgba(9, 12, 15, 0.92));
+  background: #000;
   border: 1px solid rgba(255,255,255,0.08);
 }
-
-.kitchen-visual::before {
-  content: "";
-  position: absolute;
-  inset: 0;
-  background:
-    linear-gradient(180deg, rgba(255,255,255,0.02), rgba(0,0,0,0.16)),
-    radial-gradient(circle at 50% 32%, rgba(255,173,74,0.15), transparent 22%);
-}
-
-.pot {
-  position: absolute;
-  left: 50%;
-  bottom: 18%;
-  transform: translateX(-50%);
-  width: 260px;
-  height: 120px;
-  border-radius: 50% 50% 40% 40%;
-  background: radial-gradient(circle at 50% 25%, rgba(255,241,194,0.35), rgba(114, 85, 53, 0.55) 28%, rgba(33, 23, 18, 0.9) 68%, rgba(0,0,0,0.98) 100%);
-  box-shadow: inset 0 0 18px rgba(255,255,255,0.04), 0 0 20px rgba(255,134,48,0.12);
-}
-
-.pot::before {
-  content: "";
-  position: absolute;
-  left: 50%;
-  top: -42px;
-  width: 160px;
-  height: 52px;
-  transform: translateX(-50%);
-  border-radius: 46% 46% 28% 28%;
-  background: linear-gradient(180deg, rgba(53,46,37,0.9), rgba(0,0,0,0.92));
-}
-
-.steam {
-  position: absolute;
-  left: 50%;
-  bottom: 28%;
-  width: 120px;
-  height: 140px;
-  border-radius: 50%;
-  background: rgba(255,255,255,0.1);
-  filter: blur(18px);
-  animation: steamRise 7s ease-in-out infinite;
-}
-
-.steam-2 { left: 42%; animation-delay: 1.5s; }
-.steam-3 { left: 58%; animation-delay: 3s; }
-
-.shelf {
-  position: absolute;
-  width: 180px;
-  height: 16px;
-  background: linear-gradient(180deg, rgba(90,85,77,0.82), rgba(26,22,18,0.9));
-  border-radius: 8px;
-  box-shadow: inset 0 0 10px rgba(0,0,0,0.2);
-}
-
-.shelf-a { left: 12%; top: 24%; }
-.shelf-b { right: 12%; top: 28%; }
 
 .kitchen-card {
   border: 1px solid rgba(255,255,255,0.08);
@@ -725,10 +433,9 @@ body::before {
 }
 
 .gear-section {
-  max-width: 1500px;
-  margin: 0 auto;
+  width: 100%;
+  margin: 0;
   padding: 24px 28px 38px;
-  border-radius: 26px;
 }
 
 .section-label.small {
@@ -830,8 +537,6 @@ body::before {
 }
 
 .city-section,
-.sky-section,
-.space-section,
 .planet-section {
   position: relative;
   min-height: 780px;
@@ -839,31 +544,24 @@ body::before {
 }
 
 .city-section {
-  background: linear-gradient(180deg, #0f1a1f 0%, #1b2833 12%, #405060 28%, #8a9aa5 44%, #b5c1c8 56%, #dfe6ed 100%);
+  background: #081018;
 }
 
-.inverted-city {
+.city-video,
+.city-overlay {
   position: absolute;
   inset: 0;
-  transform: perspective(1600px) rotateX(180deg) translateY(12%);
-  opacity: 0.76;
-  filter: saturate(0.7) brightness(0.8);
+  width: 100%;
+  height: 100%;
 }
 
-.city-layer-back {
-  background: linear-gradient(180deg, rgba(18,25,30,0.12), rgba(17,21,25,0.56)),
-    linear-gradient(90deg, rgba(255,255,255,0.06), rgba(0,0,0,0.12));
-  clip-path: polygon(0 40%, 18% 26%, 28% 30%, 38% 18%, 52% 28%, 66% 24%, 82% 32%, 100% 18%, 100% 100%, 0 100%);
+.city-video {
+  object-fit: cover;
+  transform: scaleY(-1);
 }
 
-.city-layer-mid {
-  background: linear-gradient(180deg, rgba(28,33,38,0.16), rgba(8,9,12,0.64));
-  clip-path: polygon(0 52%, 12% 42%, 22% 54%, 36% 44%, 49% 62%, 63% 44%, 77% 60%, 100% 47%, 100% 100%, 0 100%);
-}
-
-.city-layer-front {
-  background: linear-gradient(180deg, rgba(18,20,22,0.2), rgba(9,11,14,0.8));
-  clip-path: polygon(0 66%, 18% 52%, 28% 62%, 40% 50%, 52% 64%, 67% 54%, 80% 66%, 100% 56%, 100% 100%, 0 100%);
+.city-overlay {
+  background: linear-gradient(180deg, rgba(5, 10, 16, 0.12), rgba(4, 8, 13, 0.7));
 }
 
 .weather-panel {
@@ -873,10 +571,9 @@ body::before {
   width: min(1100px, calc(100% - 48px));
   padding: 20px 24px 16px;
   border-radius: 22px;
-  border: 1px solid rgba(255,255,255,0.12);
-  background: rgba(12, 17, 23, 0.56);
-  backdrop-filter: blur(8px);
-  box-shadow: var(--shadow);
+  background: rgba(12, 17, 23, 0.42);
+  backdrop-filter: blur(5px);
+  min-width: 0;
 }
 
 .weather-panel-city {
@@ -949,165 +646,92 @@ body::before {
   margin-top: 8px;
 }
 
-.sky-section {
-  height: 750px;
-  background: linear-gradient(180deg, #d8e5ec 0%, #c0cad3 20%, #6a8293 45%, #1b2733 75%, #070d13 100%);
-}
-
-.cloud-band {
-  position: absolute;
-  left: -10%;
-  width: 120%;
-  height: 180px;
-  border-radius: 50%;
-  background: rgba(255,255,255,0.28);
-  filter: blur(10px);
-  animation: cloudDrift 24s linear infinite alternate;
-}
-
-.cloud-band-a { top: 12%; }
-.cloud-band-b { top: 34%; opacity: 0.7; }
-.cloud-band-c { top: 58%; opacity: 0.85; }
-
-.space-section {
-  background: radial-gradient(circle at 50% 28%, rgba(18, 31, 46, 0.95), rgba(2, 7, 12, 1) 42%, rgba(0,0,0,1) 100%);
-  min-height: 780px;
-}
-
-.stars-layer {
-  position: absolute;
-  inset: 0;
-  background-repeat: repeat;
-  opacity: 0.8;
-}
-
-.stars-layer-1 {
-  background-image:
-    radial-gradient(circle, rgba(255,255,255,0.9) 0 1px, transparent 1.6px),
-    radial-gradient(circle, rgba(145,160,175,0.7) 0 1px, transparent 2px);
-  background-size: 160px 160px;
-  animation: starShift 55s linear infinite;
-}
-
-.stars-layer-2 {
-  background-image: radial-gradient(circle, rgba(255,255,255,0.7) 0 1px, transparent 1.7px);
-  background-size: 210px 210px;
-  opacity: 0.6;
-  animation: starShift 70s linear infinite reverse;
-}
-
-.stars-layer-3 {
-  background-image: radial-gradient(circle, rgba(176,204,255,0.8) 0 1px, transparent 2px);
-  background-size: 250px 250px;
-  opacity: 0.5;
-  animation: starShift 95s linear infinite;
-}
-
-.stars-layer-4 {
-  background-image: radial-gradient(circle, rgba(255,255,255,0.52) 0 1px, transparent 2px);
-  background-size: 300px 300px;
-  opacity: 0.35;
-  animation: starShift 120s linear infinite reverse;
-}
-
-.milky-way {
-  position: absolute;
-  left: 50%;
-  top: 14%;
-  transform: translateX(-50%) rotate(-18deg);
-  width: 78vw;
-  height: 52vw;
-  border-radius: 50%;
-  background: radial-gradient(circle, rgba(160, 171, 197, 0.16), rgba(7, 12, 17, 0) 55%);
-  filter: blur(14px);
-}
-
 .planet-section {
-  background: linear-gradient(180deg, #04070d 0%, #090e19 100%);
+  background: linear-gradient(180deg, rgba(4, 7, 13, 0.74), rgba(9, 14, 25, 0.92)), url("images/space2.png") center / cover;
   min-height: 680px;
-  display: grid;
-  grid-template-columns: 1.1fr 0.9fr;
-  gap: 24px;
+  min-width: 0;
+  display: block;
   align-items: center;
-  padding: 32px 28px;
+  padding: 0;
+}
+
+.planet-row {
+  position: relative;
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  background: #070d14;
+  isolation: isolate;
+}
+
+.planet-row::before {
+  content: "";
+  position: absolute;
+  top: -100px;
+  left: 0;
+  right: 0;
+  height: 220px;
+  background: linear-gradient(180deg, rgba(7, 13, 20, 0), rgba(7, 13, 20, 0.96));
+  filter: blur(26px);
+  z-index: 2;
+  pointer-events: none;
+}
+
+.planet-row::after {
+  content: "";
+  position: absolute;
+  top: -22px;
+  left: 0;
+  right: 0;
+  height: 70px;
+  background: rgba(7, 13, 20, 0.55);
+  filter: blur(24px);
+  z-index: 1;
+  pointer-events: none;
 }
 
 .planet-card {
   display: flex;
   align-items: center;
   justify-content: center;
-  min-height: 440px;
+  min-height: 680px;
+  min-width: 0;
 }
 
 .planet {
   position: relative;
   border-radius: 50%;
+  transform: translateY(var(--parallax-shift, 0px));
+  transition: transform 0.18s ease-out;
   box-shadow: inset -24px -20px 34px rgba(0,0,0,0.26), inset 12px 12px 30px rgba(255,255,255,0.08), 0 0 40px rgba(0,0,0,0.22);
 }
 
 .planet-mars {
-  width: min(30vw, 420px);
-  height: min(30vw, 420px);
-  background: radial-gradient(circle at 34% 28%, rgba(255, 190, 124, 0.9), rgba(167,70,35,0.94) 38%, rgba(92, 34, 20, 0.98) 72%, rgba(49, 18, 12, 1) 100%);
+  width: min(24vw, 360px);
+  height: min(24vw, 360px);
+  background: url("images/mars.png") center / cover;
 }
 
 .planet-moon {
-  width: min(30vw, 420px);
-  height: min(30vw, 420px);
-  background: radial-gradient(circle at 30% 30%, rgba(233,236,238,0.92), rgba(178,181,186,0.9) 24%, rgba(126,132,138,0.92) 48%, rgba(72,75,82,0.96) 100%);
+  width: min(24vw, 360px);
+  height: min(24vw, 360px);
+  background: url("images/moon.png") center / cover;
 }
 
 .weather-panel-planet {
-  position: relative;
-  transform: none;
-  left: 0;
-  width: 100%;
-  min-height: 260px;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: min(460px, calc(100% - 40px));
+  min-height: 0;
+  z-index: 3;
+  background: rgba(8, 13, 19, 0.62);
+  border: 1px solid rgba(255,255,255,0.14);
+  box-shadow: 0 16px 40px rgba(0,0,0,0.42);
 }
 
 .narrow {
   grid-template-columns: repeat(4, minmax(100px, 1fr));
-}
-
-.moon-section {
-  padding-bottom: 80px;
-}
-
-@keyframes flicker {
-  0%, 100% { transform: translateX(-50%) scaleY(0.96); opacity: 0.9; }
-  20% { transform: translateX(-50%) scaleY(1.04); opacity: 1; }
-  40% { transform: translateX(-50%) scaleY(0.92); opacity: 0.8; }
-  60% { transform: translateX(-50%) scaleY(1.08); opacity: 1; }
-  80% { transform: translateX(-50%) scaleY(0.98); opacity: 0.88; }
-}
-
-@keyframes rise {
-  0% { transform: translateY(0) scale(0.7); opacity: 0; }
-  20% { opacity: 0.25; }
-  100% { transform: translateY(-140px) scale(1.3); opacity: 0; }
-}
-
-@keyframes steamRise {
-  0% { transform: translate(-50%, 10px) scale(0.6); opacity: 0; }
-  30% { opacity: 0.22; }
-  100% { transform: translate(-50%, -80px) scale(1.2); opacity: 0; }
-}
-
-@keyframes slowDrift {
-  0% { transform: translateY(0) translateX(0); }
-  50% { transform: translateY(8px) translateX(-14px); }
-  100% { transform: translateY(0) translateX(14px); }
-}
-
-@keyframes cloudDrift {
-  0% { transform: translateX(-8%) scale(0.96); }
-  100% { transform: translateX(8%) scale(1.04); }
-}
-
-@keyframes starShift {
-  0% { transform: translateY(0); }
-  50% { transform: translateY(24px) translateX(-20px); }
-  100% { transform: translateY(0); }
 }
 
 @media (max-width: 980px) {
@@ -1124,6 +748,10 @@ body::before {
   .mine-section,
   .kitchen-section,
   .planet-section {
+    grid-template-columns: 1fr;
+  }
+
+  .planet-row {
     grid-template-columns: 1fr;
   }
 

@@ -7,7 +7,7 @@
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700;800&family=Oswald:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
-    <link rel="stylesheet" href="style.css" />
+    <link rel="stylesheet" href="static/style.css" />
   </head>
   <body>
     <div class="noise"></div>
@@ -19,41 +19,13 @@
       <a href="#kitchen">КУХНЯ</a>
       <a href="#gear">СПОРЯДЖЕННЯ</a>
       <a href="#city">МІСТО</a>
-      <a href="#sky">НЕБО</a>
-      <a href="#space">КОСМОС</a>
       <a href="#mars">МАРС</a>
       <a href="#moon">МІСЯЦЬ</a>
     </nav>
 
     <main class="page-shell">
-      <section id="generator" class="scene hero-scene">
-        <div class="hero-backdrop">
-          <div class="city-glow"></div>
-          <div class="city-silhouette">
-            <span class="tower tower-one"></span>
-            <span class="tower tower-two"></span>
-            <span class="tower tower-three"></span>
-            <span class="house house-a"></span>
-            <span class="house house-b"></span>
-            <span class="house house-c"></span>
-            <span class="house house-d"></span>
-            <span class="house house-e"></span>
-            <span class="house house-f"></span>
-            <span class="warehouse"></span>
-          </div>
-          <div class="generator">
-            <div class="generator-core">
-              <div class="flame"></div>
-            </div>
-            <span class="pipe pipe-a"></span>
-            <span class="pipe pipe-b"></span>
-            <span class="pipe pipe-c"></span>
-            <span class="smoke smoke-a"></span>
-            <span class="smoke smoke-b"></span>
-            <span class="smoke smoke-c"></span>
-          </div>
-          <div class="snow-field"></div>
-        </div>
+      <section id="generator" class="hero-scene">
+        <div class="hero-backdrop"></div>
 
         <div class="hud-panel">
           <div class="hud-item">
@@ -72,22 +44,10 @@
       </section>
 
       <section id="shaft" class="section mine-section">
-        <div class="mine-visual panel-surface">
-          <div class="mine-bg"></div>
-          <div class="mine-structure">
-            <span class="beam beam-1"></span>
-            <span class="beam beam-2"></span>
-            <span class="beam beam-3"></span>
-            <span class="lamp lamp-1"></span>
-            <span class="lamp lamp-2"></span>
-            <span class="cart cart-1"></span>
-            <span class="cart cart-2"></span>
-            <span class="smoke-drift smoke-drift-1"></span>
-            <span class="smoke-drift smoke-drift-2"></span>
-          </div>
+        <div class="mine-visual">
         </div>
 
-        <div class="mine-panel panel-surface">
+        <div class="mine-panel">
           <div class="section-label">ВУГІЛЬНА ШАХТА</div>
           <div class="section-subtitle">КЛІКАЙ ВУГІЛЛЯ</div>
 
@@ -131,15 +91,8 @@
         </div>
       </section>
 
-      <section id="kitchen" class="section kitchen-section panel-surface">
-        <div class="kitchen-visual">
-          <div class="pot"></div>
-          <div class="steam steam-1"></div>
-          <div class="steam steam-2"></div>
-          <div class="steam steam-3"></div>
-          <div class="shelf shelf-a"></div>
-          <div class="shelf shelf-b"></div>
-        </div>
+      <section id="kitchen" class="section kitchen-section">
+        <div class="kitchen-visual" aria-hidden="true"></div>
 
         <div class="kitchen-card">
           <h3>КАША З ОПИЛКАМИ</h3>
@@ -152,17 +105,17 @@
         </div>
       </section>
 
-      <section id="gear" class="section gear-section panel-surface">
+      <section id="gear" class="section gear-section">
         <div class="section-label small">СПОРЯДЖЕННЯ</div>
         <div class="equipment-grid" id="equipmentGrid"></div>
       </section>
 
       <section id="city" class="section city-section">
-        <div class="inverted-city city-layer city-layer-back"></div>
-        <div class="inverted-city city-layer city-layer-mid"></div>
-        <div class="inverted-city city-layer city-layer-front"></div>
-
-        <div class="weather-panel weather-panel-city panel-surface">
+        <video class="city-video" autoplay muted loop playsinline aria-hidden="true">
+          <source src="static/media/sity.mp4" type="video/mp4" />
+        </video>
+        <div class="city-overlay"></div>
+        <div class="weather-panel weather-panel-city">
           <header>ПРОГНОЗ ПОГОДИ В МІСТІ</header>
           <div class="weather-summary">
             <div class="temp-large" id="cityTemp">-76°C</div>
@@ -193,63 +146,51 @@
         </div>
       </section>
 
-      <section id="sky" class="section sky-section">
-        <div class="cloud-band cloud-band-a"></div>
-        <div class="cloud-band cloud-band-b"></div>
-        <div class="cloud-band cloud-band-c"></div>
-      </section>
-
-      <section id="space" class="section space-section">
-        <div class="stars-layer stars-layer-1"></div>
-        <div class="stars-layer stars-layer-2"></div>
-        <div class="stars-layer stars-layer-3"></div>
-        <div class="stars-layer stars-layer-4"></div>
-        <div class="milky-way"></div>
-      </section>
-
-      <section id="mars" class="section planet-section panel-surface">
-        <div class="planet-card">
-          <div class="planet planet-mars"></div>
-        </div>
-        <div class="weather-panel weather-panel-planet">
-          <header>ПРОГНОЗ ПОГОДИ: МАРС</header>
-          <div class="weather-summary">
-            <div class="temp-large">-62°C</div>
-            <div class="weather-copy">
-              <strong>ПИЛОВА БУРЯ</strong>
-              <span>ВІТЕР: 34 м/с</span>
+      <div class="planet-row">
+        <section id="mars" class="section planet-section">
+          <div class="planet-card">
+            <div class="planet planet-mars" role="img" aria-label="Марс"></div>
+          </div>
+          <div class="weather-panel weather-panel-planet">
+            <header>ПРОГНОЗ ПОГОДИ: МАРС</header>
+            <div class="weather-summary">
+              <div class="temp-large">-62°C</div>
+              <div class="weather-copy">
+                <strong>ПИЛОВА БУРЯ</strong>
+                <span>ВІТЕР: 34 м/с</span>
+              </div>
+            </div>
+            <div class="forecast-row narrow">
+              <div class="forecast-item"><span>06:00</span><strong>-64°C</strong></div>
+              <div class="forecast-item"><span>12:00</span><strong>-63°C</strong></div>
+              <div class="forecast-item"><span>18:00</span><strong>-61°C</strong></div>
+              <div class="forecast-item"><span>00:00</span><strong>-60°C</strong></div>
             </div>
           </div>
-          <div class="forecast-row narrow">
-            <div class="forecast-item"><span>06:00</span><strong>-64°C</strong></div>
-            <div class="forecast-item"><span>12:00</span><strong>-63°C</strong></div>
-            <div class="forecast-item"><span>18:00</span><strong>-61°C</strong></div>
-            <div class="forecast-item"><span>00:00</span><strong>-60°C</strong></div>
-          </div>
-        </div>
-      </section>
+        </section>
 
-      <section id="moon" class="section planet-section panel-surface moon-section">
-        <div class="planet-card">
-          <div class="planet planet-moon"></div>
-        </div>
-        <div class="weather-panel weather-panel-planet">
-          <header>ПРОГНОЗ ПОГОДИ: МІСЯЦЬ</header>
-          <div class="weather-summary">
-            <div class="temp-large">-173°C</div>
-            <div class="weather-copy">
-              <strong>ЯСНО</strong>
-              <span>ВІТЕР: 0 м/с</span>
+        <section id="moon" class="section planet-section">
+          <div class="planet-card">
+            <div class="planet planet-moon" role="img" aria-label="Місяць"></div>
+          </div>
+          <div class="weather-panel weather-panel-planet">
+            <header>ПРОГНОЗ ПОГОДИ: МІСЯЦЬ</header>
+            <div class="weather-summary">
+              <div class="temp-large">-173°C</div>
+              <div class="weather-copy">
+                <strong>ЯСНО</strong>
+                <span>ВІТЕР: 0 м/с</span>
+              </div>
+            </div>
+            <div class="forecast-row narrow">
+              <div class="forecast-item"><span>06:00</span><strong>-174°C</strong></div>
+              <div class="forecast-item"><span>12:00</span><strong>-173°C</strong></div>
+              <div class="forecast-item"><span>18:00</span><strong>-172°C</strong></div>
+              <div class="forecast-item"><span>00:00</span><strong>-173°C</strong></div>
             </div>
           </div>
-          <div class="forecast-row narrow">
-            <div class="forecast-item"><span>06:00</span><strong>-174°C</strong></div>
-            <div class="forecast-item"><span>12:00</span><strong>-173°C</strong></div>
-            <div class="forecast-item"><span>18:00</span><strong>-172°C</strong></div>
-            <div class="forecast-item"><span>00:00</span><strong>-173°C</strong></div>
-          </div>
-        </div>
-      </section>
+        </section>
+      </div>
     </main>
 
     <script src="main.js"></script>

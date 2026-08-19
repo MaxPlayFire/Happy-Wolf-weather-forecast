@@ -24,9 +24,9 @@ const WEATHER_FALLBACK = {
 };
 
 const defaultState = {
-  coal: 1240,
-  stamps: 2350,
-  miners: 24,
+  coal: 0,
+  stamps: 0,
+  miners: 0,
   minerUpgradeCost: 500,
   coalPerClick: 1,
   porridgeOwned: false,
@@ -40,9 +40,9 @@ const defaultState = {
 };
 
 const equipList = [
-  { key: 'gloves', name: 'РУКАВИЦІ З ПІДІГРІВОМ', bonus: '+5% КЛІК', price: 500 },
-  { key: 'shovel', name: 'ШВИДКІСНІ ЛОПАТИ', bonus: '+10% КЛІК', price: 750 },
-  { key: 'exoskeleton', name: 'ЕКЗОСКЕЛЕТ', bonus: '+25% КЛІК', price: 2500 },
+  { key: 'gloves', name: 'РУКАВИЦІ', bonus: '+5% КЛІК', price: 500 },
+  { key: 'shovel', name: 'МІЦНІ ІНСТРУМЕНТИ', bonus: '+10% КЛІК', price: 750 },
+  { key: 'exoskeleton', name: 'БУР', bonus: '+25% КЛІК', price: 2500 },
   { key: 'suit', name: 'ТЕРМОКОСТЮМ', bonus: '+15% КЛІК', price: 1250 }
 ];
 
@@ -78,12 +78,15 @@ function loadState() {
     if (!saved) return cloneObject(defaultState);
 
     const parsed = JSON.parse(saved);
+    const savedEquipment = (parsed && parsed.equipment) || {};
     return {
       ...cloneObject(defaultState),
       ...parsed,
       equipment: {
-        ...cloneObject(defaultState.equipment),
-        ...((parsed && parsed.equipment) || {})
+        gloves: { ...cloneObject(defaultState.equipment.gloves), ...(savedEquipment.gloves || {}) },
+        shovel: { ...cloneObject(defaultState.equipment.shovel), ...(savedEquipment.shovel || {}) },
+        exoskeleton: { ...cloneObject(defaultState.equipment.exoskeleton), ...(savedEquipment.exoskeleton || {}) },
+        suit: { ...cloneObject(defaultState.equipment.suit), ...(savedEquipment.suit || {}) }
       }
     };
   } catch (error) {
@@ -292,6 +295,14 @@ function setupSoundToggle() {
   });
 }
 
+function updatePlanetParallax() {
+  document.querySelectorAll('.planet').forEach((planet) => {
+    const distanceFromCenter = planet.getBoundingClientRect().top - window.innerHeight / 2;
+    const shift = Math.max(-34, Math.min(34, distanceFromCenter * -0.08));
+    planet.style.setProperty('--parallax-shift', `${shift}px`);
+  });
+}
+
 async function fetchWeatherData() {
   const cityWeather = { ...WEATHER_FALLBACK.city };
   const marsWeather = { ...WEATHER_FALLBACK.mars };
@@ -351,9 +362,12 @@ function initialize() {
   renderEquipment();
   initializeWeatherUi();
   updateHud();
+  updatePlanetParallax();
 }
 
 initialize();
+
+window.addEventListener('scroll', updatePlanetParallax, { passive: true });
 
 setInterval(() => {
   const passiveIncome = Math.max(1, Math.round(state.miners * 0.18 + (state.porridgeOwned ? 1 : 0)));
