@@ -17,7 +17,6 @@
       <a href="#generator">ГЕНЕРАТОР</a>
       <a href="#shaft">ШАХТА</a>
       <a href="#kitchen">КУХНЯ</a>
-      <a href="#gear">СПОРЯДЖЕННЯ</a>
       <a href="#city">МІСТО</a>
       <a href="#mars">МАРС</a>
       <a href="#moon">МІСЯЦЬ</a>
@@ -66,19 +65,6 @@
             <strong id="coalPerClickLabel">+1</strong>
           </div>
 
-          <div class="mine-efficiency">
-            <div class="efficiency-top">
-              <span>ЕФЕКТИВНІСТЬ ШАХТИ</span>
-              <strong id="mineEfficiencyLabel">100%</strong>
-            </div>
-            <div class="progress-bar"><span id="mineProgressBar"></span></div>
-          </div>
-
-          <div class="miners-row">
-            <span>ШАХТАРІ</span>
-            <strong id="minersInfo">24 / 30</strong>
-          </div>
-
           <button class="action-button primary-button" id="mineUpgradeBtn" type="button">ПОЛІПШИТИ</button>
 
           <div class="sell-wrap">
@@ -101,19 +87,12 @@
             <span>ЦІНА</span>
             <strong>150 ТЕРМОШТАМПІВ</strong>
           </div>
-          <button class="action-button primary-button" id="porridgeBtn" type="button">КУПИТИ</button>
+          <button class="action-button secondary-button" type="button" disabled>СКОРО</button>
         </div>
       </section>
 
-      <section id="gear" class="section gear-section">
-        <div class="section-label small">СПОРЯДЖЕННЯ</div>
-        <div class="equipment-grid" id="equipmentGrid"></div>
-      </section>
-
       <section id="city" class="section city-section">
-        <video class="city-video" autoplay muted loop playsinline aria-hidden="true">
-          <source src="static/media/sity.mp4" type="video/mp4" />
-        </video>
+        <img class="city-video" src="static/images/sity.jpg" alt="Засніжене місто" />
         <div class="city-overlay"></div>
         <div class="weather-panel weather-panel-city">
           <header>ПРОГНОЗ ПОГОДИ В МІСТІ</header>
