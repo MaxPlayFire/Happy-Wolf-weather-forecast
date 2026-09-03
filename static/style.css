@@ -1,0 +1,518 @@
+:root {
+  --bg: #0b1016;
+  --panel: #141c24;
+  --panel-light: #1b2630;
+  --text: #f3f5f6;
+  --muted: #aab6bf;
+  --line: #33414c;
+  --accent: #f09a4b;
+  --shadow: 0 12px 30px rgba(0, 0, 0, .28);
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  margin: 0;
+  color: var(--text);
+  background: var(--bg);
+  font-family: Oswald, Arial, sans-serif;
+  overflow-x: hidden;
+}
+
+button,
+a {
+  font: inherit;
+}
+
+button {
+  color: inherit;
+  cursor: pointer;
+}
+
+.noise {
+  display: none;
+}
+
+.top-nav {
+  position: fixed;
+  z-index: 10;
+  top: 12px;
+  left: 50%;
+  display: flex;
+  gap: 14px;
+  max-width: calc(100% - 24px);
+  padding: 10px 14px;
+  overflow-x: auto;
+  white-space: nowrap;
+  transform: translateX(-50%);
+  border: 1px solid var(--line);
+  background: rgba(11, 16, 22, .9);
+  box-shadow: var(--shadow);
+}
+
+.top-nav a {
+  color: var(--muted);
+  font-size: .72rem;
+  letter-spacing: .08em;
+  text-decoration: none;
+}
+
+.top-nav a:hover {
+  color: var(--text);
+}
+
+.sound-toggle {
+  position: fixed;
+  z-index: 11;
+  top: 62px;
+  right: 16px;
+  padding: 8px 12px;
+  border: 1px solid var(--line);
+  background: var(--panel);
+  font-size: .72rem;
+}
+
+.section,
+.hero-scene {
+  position: relative;
+  min-height: 620px;
+  overflow: hidden;
+}
+
+.hero-scene {
+  height: 100vh;
+  min-height: 680px;
+}
+
+.hero-backdrop,
+.city-video,
+.city-overlay {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+}
+
+.hero-backdrop {
+  background: linear-gradient(180deg, rgba(4, 9, 15, .15), rgba(4, 8, 12, .68)), url("images/generator.jpg") center / cover;
+}
+
+.city-video {
+  object-fit: cover;
+}
+
+.city-overlay {
+  background: rgba(4, 9, 15, .52);
+}
+
+.hud-panel,
+.weather-panel,
+.mine-panel,
+.kitchen-card {
+  border: 1px solid var(--line);
+  background: rgba(20, 28, 36, .94);
+  box-shadow: var(--shadow);
+}
+
+.hud-panel {
+  position: absolute;
+  top: 106px;
+  left: 50%;
+  display: flex;
+  gap: 28px;
+  padding: 12px 18px;
+  transform: translateX(-50%);
+  background: rgba(11, 16, 22, .78);
+}
+
+.hud-item {
+  display: grid;
+  gap: 3px;
+  min-width: 84px;
+}
+
+.hud-item span,
+.section-label,
+.section-subtitle,
+.resource-line,
+.stamps-display span,
+.card-price-line,
+.weather-panel header,
+.weather-copy,
+.forecast-item span {
+  color: var(--muted);
+  font-size: .72rem;
+  letter-spacing: .08em;
+  text-transform: uppercase;
+}
+
+.hud-item strong,
+.resource-line strong,
+.stamps-display strong,
+.temp-large,
+.forecast-item strong {
+  font-family: Orbitron, monospace;
+}
+
+.hud-item strong {
+  font-size: 1.1rem;
+}
+
+.mine-section,
+.kitchen-section {
+  display: grid;
+  grid-template-columns: 1.2fr .8fr;
+  gap: 28px;
+  align-items: center;
+  padding: 36px 5%;
+  background: #0d141b;
+}
+
+.mine-visual,
+.kitchen-visual {
+  min-height: 520px;
+  border: 1px solid var(--line);
+  background: url("images/mine.png") center / cover;
+}
+
+.kitchen-visual {
+  background-image: url("images/citchen.jpg");
+}
+
+.mine-panel {
+  padding: 30px;
+}
+
+.section-label {
+  margin-bottom: 6px;
+}
+
+.section-subtitle {
+  margin-bottom: 20px;
+}
+
+.coal-clicker {
+  position: relative;
+  display: block;
+  width: 210px;
+  height: 210px;
+  margin: 10px auto 24px;
+  border: 10px solid #26313a;
+  border-radius: 50%;
+  background: radial-gradient(circle at 35% 28%, #575e62, #11171b 38%, #050709 72%);
+  box-shadow: inset 0 0 28px #000, 0 10px 24px rgba(0, 0, 0, .45);
+}
+
+.coal-clicker:active {
+  transform: scale(.97);
+}
+
+.coal-shard,
+.coal-glow {
+  position: absolute;
+  inset: 22%;
+  border-radius: 45%;
+}
+
+.coal-shard {
+  background: #080a0b;
+  transform: rotate(15deg);
+  box-shadow: inset 8px 8px 8px #252b2f;
+}
+
+.coal-glow {
+  inset: 0;
+  background: radial-gradient(circle, rgba(240, 154, 75, .18), transparent 60%);
+}
+
+.floating-pop {
+  position: absolute;
+  color: var(--accent);
+  font-weight: bold;
+  pointer-events: none;
+  animation: rise .7s ease-out forwards;
+}
+
+@keyframes rise {
+  to {
+    opacity: 0;
+    transform: translateY(-35px);
+  }
+}
+
+.resource-line {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  margin-top: 14px;
+}
+
+.resource-line strong,
+.stamps-display strong {
+  color: var(--text);
+  font-size: 1.1rem;
+}
+
+.resource-line.small strong {
+  color: var(--accent);
+}
+
+.action-button,
+.equipment-button {
+  width: 100%;
+  padding: 12px 16px;
+  border: 1px solid var(--line);
+  background: var(--panel-light);
+  letter-spacing: .08em;
+  text-transform: uppercase;
+}
+
+.action-button:hover,
+.equipment-button:hover {
+  border-color: var(--accent);
+}
+
+.action-button:disabled,
+.equipment-button:disabled {
+  cursor: not-allowed;
+  opacity: .45;
+}
+
+.primary-button {
+  margin-top: 20px;
+  background: #6d4325;
+}
+
+.secondary-button {
+  background: transparent;
+}
+
+.sell-wrap {
+  display: flex;
+  gap: 18px;
+  align-items: center;
+  margin-top: 18px;
+}
+
+.stamps-display {
+  flex: 1;
+  text-align: right;
+}
+
+.stamps-display span {
+  display: block;
+}
+
+.kitchen-card {
+  padding: 26px;
+}
+
+.kitchen-card h3 {
+  margin: 0;
+  font-size: 1.7rem;
+}
+
+.kitchen-card p {
+  color: var(--muted);
+}
+
+.card-price-line {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  margin: 22px 0;
+}
+
+.kitchen-status {
+  margin-bottom: 12px;
+  color: var(--accent);
+  font-size: .72rem;
+  letter-spacing: .08em;
+}
+
+.city-section {
+  min-height: 700px;
+  background: #101820;
+}
+
+.weather-panel {
+  position: absolute;
+  bottom: 12%;
+  left: 50%;
+  width: min(900px, calc(100% - 40px));
+  padding: 24px;
+  transform: translateX(-50%);
+}
+
+.weather-panel header {
+  margin-bottom: 18px;
+}
+
+.weather-summary {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 24px;
+}
+
+.temp-large {
+  font-size: clamp(2.4rem, 6vw, 4.5rem);
+}
+
+.weather-copy {
+  display: grid;
+  gap: 6px;
+}
+
+.weather-copy strong {
+  color: var(--text);
+  font-size: 1rem;
+}
+
+.forecast-row {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 10px;
+  margin-top: 20px;
+}
+
+.forecast-item {
+  padding: 12px 8px;
+  border: 1px solid var(--line);
+  text-align: center;
+}
+
+.forecast-item span {
+  display: block;
+}
+
+.forecast-item strong {
+  display: block;
+  margin-top: 7px;
+  font-size: 1rem;
+}
+
+.planet-row {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  background: #080d13;
+}
+
+.planet-section {
+  min-height: 680px;
+  background: linear-gradient(rgba(5, 10, 16, .45), rgba(5, 10, 16, .72)), url("images/space2.png") center / cover;
+}
+
+.planet-card {
+  display: grid;
+  min-height: 680px;
+  place-items: center;
+}
+
+.planet {
+  width: min(25vw, 300px);
+  aspect-ratio: 1;
+  border-radius: 50%;
+  box-shadow: inset -24px -20px 34px rgba(0, 0, 0, .3);
+}
+
+.planet-mars {
+  background: url("images/mars.png") center / cover;
+}
+
+.planet-moon {
+  background: url("images/moon.png") center / cover;
+}
+
+.weather-panel-planet {
+  top: 50%;
+  bottom: auto;
+  width: min(420px, calc(100% - 28px));
+  transform: translate(-50%, -50%);
+}
+
+@media (max-width: 800px) {
+
+  .mine-section,
+  .kitchen-section,
+  .planet-row {
+    grid-template-columns: 1fr;
+  }
+
+  .mine-visual,
+  .kitchen-visual {
+    min-height: 280px;
+  }
+
+  .planet-section,
+  .planet-card {
+    min-height: 600px;
+  }
+
+  .planet {
+    width: min(50vw, 280px);
+  }
+}
+
+@media (max-width: 520px) {
+  .top-nav {
+    left: 8px;
+    right: 8px;
+    max-width: none;
+    transform: none;
+  }
+
+  .sound-toggle {
+    top: 62px;
+    right: 8px;
+  }
+
+  .hud-panel {
+    top: 108px;
+    gap: 10px;
+    padding: 10px;
+  }
+
+  .hud-item {
+    min-width: 66px;
+  }
+
+  .hud-item strong {
+    font-size: .9rem;
+  }
+
+  .mine-section,
+  .kitchen-section {
+    padding: 24px 14px;
+  }
+
+  .mine-panel,
+  .kitchen-card,
+  .weather-panel {
+    padding: 18px;
+  }
+
+  .weather-summary {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  .forecast-row {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .sell-wrap {
+    align-items: stretch;
+    flex-direction: column;
+  }
+
+  .stamps-display {
+    text-align: left;
+  }
+}
