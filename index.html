@@ -1,99 +1,102 @@
 <!DOCTYPE html>
 <html lang="uk">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Frostpunk Coal Hive</title>
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700;800&family=Oswald:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
-    <link rel="stylesheet" href="static/style.css" />
-  </head>
-  <body>
-    <div class="noise"></div>
-    <button class="sound-toggle" id="soundToggle" type="button">🔊 ЗВУК</button>
-
-    <nav class="top-nav">
-      <a href="#generator">ГЕНЕРАТОР</a>
-      <a href="#shaft">ШАХТА</a>
-      <a href="#kitchen">КУХНЯ</a>
-      <a href="#city">МІСТО</a>
-      <a href="#mars">МАРС</a>
-      <a href="#moon">МІСЯЦЬ</a>
-    </nav>
-
-    <main class="page-shell">
-      <section id="generator" class="hero-scene">
-        <div class="hero-backdrop"></div>
-
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Frostpunk Coal Hive</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700;800&family=Oswald:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="static/style.css" />
+</head>
+<body>
+  <div class="noise" aria-hidden="true"></div>
+  <div class="scanlines" aria-hidden="true"></div>
+  <canvas id="snowCanvas" class="snow-canvas" aria-hidden="true"></canvas>
+  <button class="sound-toggle" id="soundToggle" type="button">🔊 ЗВУК</button>
+  <nav class="top-nav">
+    <a href="#generator">ГЕНЕРАТОР</a>
+    <a href="#shaft">ШАХТА</a>
+    <a href="#kitchen">КУХНЯ</a>
+    <a href="#kitchen">СПОРЯДЖЕННЯ</a>
+    <a href="#city">МІСТО</a>
+    <a href="#planets">МАРС</a>
+    <a href="#planets">МІСЯЦЬ</a>
+  </nav>
+  <main class="page-shell">
+    <section id="generator" class="hero-scene scene">
+      <div class="scene-bg hero-backdrop"></div>
+      <div class="generator-core" aria-hidden="true">
+        <div class="core-ring core-ring-1"></div>
+        <div class="core-ring core-ring-2"></div>
+        <div class="core-ring core-ring-3"></div>
+        <div class="core-glow"></div>
+      </div>
+      <div class="steam-layer" aria-hidden="true"></div>
+      <div class="scene-content">
         <div class="hud-panel">
-          <div class="hud-item">
-            <span>ТЕМПЕРАТУРА</span>
-            <strong>-76°C</strong>
-          </div>
-          <div class="hud-item">
-            <span>ДЕНЬ</span>
-            <strong>34</strong>
-          </div>
-          <div class="hud-item">
-            <span>ЧАС</span>
-            <strong>06:00</strong>
-          </div>
+          <div class="hud-item"><span>ТЕМПЕРАТУРА</span><strong class="temp-flicker">-76°C</strong></div>
+          <div class="hud-item"><span>ДЕНЬ</span><strong>34</strong></div>
+          <div class="hud-item"><span>ЧАС</span><strong id="liveClock">06:00</strong></div>
         </div>
-      </section>
-
-      <section id="shaft" class="section mine-section">
-        <div class="mine-visual">
+        <div class="hero-title">
+          <h1 data-text="FROSTPUNK">FROSTPUNK</h1>
+          <p>COAL HIVE</p>
+          <div class="hero-status"><span class="status-dot"></span><span>ГЕНЕРАТОР АКТИВНИЙ</span></div>
         </div>
+      </div>
+    </section>
 
+    <section id="shaft" class="section mine-section scene">
+      <div class="scene-bg mine-visual"></div>
+      <div class="embers" aria-hidden="true"></div>
+      <div class="scene-content">
         <div class="mine-panel">
           <div class="section-label">ВУГІЛЬНА ШАХТА</div>
           <div class="section-subtitle">КЛІКАЙ ВУГІЛЛЯ</div>
-
           <button class="coal-clicker" id="coalClicker" type="button" aria-label="Клікнути вугілля">
             <span class="coal-shard"></span>
             <span class="coal-glow"></span>
+            <span class="coal-ring"></span>
           </button>
-
-          <div class="resource-line">
-            <span>ВУГІЛЛЯ</span>
-            <strong id="coalCount">1 240</strong>
+          <div class="resource-line"><span>ВУГІЛЛЯ</span><strong id="coalCount">0</strong></div>
+          <div class="resource-line small"><span>ЗА КЛІК</span><strong id="coalPerClickLabel">+1</strong></div>
+          <div class="mine-efficiency">
+            <div class="efficiency-top"><span>ЕФЕКТИВНІСТЬ ШАХТИ</span><strong id="mineEfficiencyLabel">0%</strong></div>
+            <div class="progress-bar"><span id="mineProgressBar"></span></div>
           </div>
-
-          <div class="resource-line small">
-            <span>ЗА КЛІК</span>
-            <strong id="coalPerClickLabel">+1</strong>
-          </div>
-
+          <div class="miners-row"><span>ШАХТАРІ</span><strong id="minersInfo">0 / 30</strong></div>
           <button class="action-button primary-button" id="mineUpgradeBtn" type="button">ПОЛІПШИТИ</button>
-
           <div class="sell-wrap">
             <button class="action-button ghost-button" id="sellCoalBtn" type="button">ПРОДАТИ ВУГІЛЛЯ</button>
-            <div class="stamps-display">
-              <span>ТЕРМОШТАМПИ</span>
-              <strong id="thermoCount">2 350</strong>
-            </div>
+            <div class="stamps-display"><span>ТЕРМОШТАМПИ</span><strong id="thermoCount">0</strong></div>
           </div>
         </div>
-      </section>
+      </div>
+    </section>
 
-      <section id="kitchen" class="section kitchen-section">
-        <div class="kitchen-visual" aria-hidden="true"></div>
-
-        <div class="kitchen-card">
-          <h3>КАША З ОПИЛКАМИ</h3>
-          <p>+1 ХВ НА КЛІК</p>
-          <div class="card-price-line">
-            <span>ЦІНА</span>
-            <strong>150 ТЕРМОШТАМПІВ</strong>
+    <section id="kitchen" class="section kitchen-section gear-section scene">
+      <div class="scene-bg kitchen-visual gear-visual" aria-hidden="true"></div>
+      <div class="scene-content combined-upgrades">
+        <div class="gear-panel">
+          <div class="section-label small">СПОРЯДЖЕННЯ</div>
+          <div class="equipment-carousel" aria-label="Вибір спорядження">
+            <button class="carousel-arrow carousel-arrow-prev" id="equipmentPrev" type="button" aria-label="Попередній предмет">&#8249;</button>
+            <div class="equipment-carousel-stage" id="equipmentGrid"></div>
+            <button class="carousel-arrow carousel-arrow-next" id="equipmentNext" type="button" aria-label="Наступний предмет">&#8250;</button>
           </div>
-          <button class="action-button secondary-button" type="button" disabled>СКОРО</button>
         </div>
-      </section>
+      </div>
+    </section>
 
-      <section id="city" class="section city-section">
-        <img class="city-video" src="static/images/sity.jpg" alt="Засніжене місто" />
+    <section id="city" class="section city-section scene">
+      <div class="scene-bg">
+        <video class="city-video" autoplay muted loop playsinline aria-hidden="true">
+          <source src="static/media/sity.mp4" type="video/mp4" />
+        </video>
         <div class="city-overlay"></div>
+      </div>
+      <div class="scene-content">
         <div class="weather-panel weather-panel-city">
           <header>ПРОГНОЗ ПОГОДИ В МІСТІ</header>
           <div class="weather-summary">
@@ -105,39 +108,25 @@
             </div>
           </div>
           <div class="forecast-row">
-            <div class="forecast-item">
-              <span>06:00</span>
-              <strong>-76°C</strong>
-            </div>
-            <div class="forecast-item">
-              <span>12:00</span>
-              <strong>-78°C</strong>
-            </div>
-            <div class="forecast-item">
-              <span>18:00</span>
-              <strong>-79°C</strong>
-            </div>
-            <div class="forecast-item">
-              <span>00:00</span>
-              <strong>-80°C</strong>
-            </div>
+            <div class="forecast-item"><span>06:00</span><strong>-76°C</strong></div>
+            <div class="forecast-item"><span>12:00</span><strong>-78°C</strong></div>
+            <div class="forecast-item"><span>18:00</span><strong>-79°C</strong></div>
+            <div class="forecast-item"><span>00:00</span><strong>-80°C</strong></div>
           </div>
         </div>
-      </section>
+      </div>
+    </section>
 
-      <div class="planet-row">
-        <section id="mars" class="section planet-section">
-          <div class="planet-card">
-            <div class="planet planet-mars" role="img" aria-label="Марс"></div>
-          </div>
+    <section id="planets" class="section planet-section scene">
+      <div class="scene-bg planet-bg mars-bg"></div>
+      <div class="scene-content planet-pair">
+        <div id="mars" class="planet-card">
+          <div class="planet planet-mars" role="img" aria-label="Марс"></div>
           <div class="weather-panel weather-panel-planet">
             <header>ПРОГНОЗ ПОГОДИ: МАРС</header>
             <div class="weather-summary">
               <div class="temp-large">-62°C</div>
-              <div class="weather-copy">
-                <strong>ПИЛОВА БУРЯ</strong>
-                <span>ВІТЕР: 34 м/с</span>
-              </div>
+              <div class="weather-copy"><strong>ПИЛОВА БУРЯ</strong><span>ВІТЕР: 34 м/с</span></div>
             </div>
             <div class="forecast-row narrow">
               <div class="forecast-item"><span>06:00</span><strong>-64°C</strong></div>
@@ -146,20 +135,14 @@
               <div class="forecast-item"><span>00:00</span><strong>-60°C</strong></div>
             </div>
           </div>
-        </section>
-
-        <section id="moon" class="section planet-section">
-          <div class="planet-card">
-            <div class="planet planet-moon" role="img" aria-label="Місяць"></div>
-          </div>
+        </div>
+        <div id="moon" class="planet-card">
+          <div class="planet planet-moon" role="img" aria-label="Місяць"></div>
           <div class="weather-panel weather-panel-planet">
             <header>ПРОГНОЗ ПОГОДИ: МІСЯЦЬ</header>
             <div class="weather-summary">
               <div class="temp-large">-173°C</div>
-              <div class="weather-copy">
-                <strong>ЯСНО</strong>
-                <span>ВІТЕР: 0 м/с</span>
-              </div>
+              <div class="weather-copy"><strong>ЯСНО</strong><span>ВІТЕР: 0 м/с</span></div>
             </div>
             <div class="forecast-row narrow">
               <div class="forecast-item"><span>06:00</span><strong>-174°C</strong></div>
@@ -168,10 +151,10 @@
               <div class="forecast-item"><span>00:00</span><strong>-173°C</strong></div>
             </div>
           </div>
-        </section>
+        </div>
       </div>
-    </main>
-
-    <script src="main.js"></script>
-  </body>
+    </section>
+  </main>
+  <script src="main.js"></script>
+</body>
 </html>
