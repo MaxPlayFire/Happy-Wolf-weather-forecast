@@ -60,7 +60,6 @@ const els = {
   minersInfo: document.getElementById('minersInfo'),
   generatorStatus: document.getElementById('generatorStatus'),
   generatorToggleBtn: document.getElementById('generatorToggleBtn'),
-  hireMinerBtn: document.getElementById('hireMinerBtn'),
   coalBurnLabel: document.getElementById('coalBurnLabel'),
   populationHud: document.getElementById('populationHud'),
   cityMap: document.getElementById('cityMap'),
@@ -294,16 +293,6 @@ function sellCoal() {
   state.stamps += saleValue;
   state.totalSold += actualCoalSold;
   state.runScore += saleValue * 2;
-  saveState();
-  updateHud();
-}
-
-function buyMineUpgrade() {
-  if (state.coal < state.mineUpgradeCost) return;
-  state.coal -= state.mineUpgradeCost;
-  state.mineCapacity += 5;
-  state.mineUpgradeCost = Math.round(state.mineUpgradeCost * 1.65);
-  state.runScore += 50;
   saveState();
   updateHud();
 }
