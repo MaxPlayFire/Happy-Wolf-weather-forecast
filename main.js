@@ -1,6 +1,6 @@
-const STORAGE_KEY = 'frostpunk-coal-hive-save-v1';
+const STORAGE_KEY = 'frostpunk-coal-hive-save-v3';
 const SELL_RATE = 10;
-const MINE_CAP = 30;
+const INITIAL_MINE_CAP = 5;
 
 const WEATHER_FALLBACK = {
   city: { temp: -76, condition: 'СИЛЬНИЙ СНІГОПАД', wind: 18, feelsLike: -102, hourly: [-76, -78, -79, -80] },
@@ -9,13 +9,27 @@ const WEATHER_FALLBACK = {
 };
 
 const defaultState = {
-  coal: 0,
+  coal: 250,
   stamps: 0,
-  miners: 0,
-  minerUpgradeCost: 500,
+  miners: 5,
+  minerHireCost: 25,
+  mineCapacity: INITIAL_MINE_CAP,
+  mineUpgradeCost: 150,
   coalPerClick: 1,
   porridgeOwned: false,
-  soundOn: true,
+  automatonOwned: false,
+  generatorOn: false,
+  runSeconds: 0,
+  cityLevel: 1,
+  population: 80,
+  populationCap: 80,
+  runScore: 0,
+  totalSold: 0,
+  totalHired: 0,
+  mineUpgrades: { compact: 0, reinforced: 0, industrial: 0 },
+  completedRuns: 0,
+  lastRun: null,
+  sellPercent: 100,
   equipment: {
     gloves: { owned: false, price: 500, bonus: 0.05 },
     shovel: { owned: false, price: 750, bonus: 0.1 },
@@ -29,7 +43,12 @@ const equipList = [
   { key: 'shovel', name: 'МІЦНІ ІНСТРУМЕНТИ', bonus: '+10% КЛІК', price: 750, icon: '⛏', description: 'Надійний інструмент для важкої зміни.' },
   { key: 'exoskeleton', name: 'БУР', bonus: '+25% КЛІК', price: 2500, icon: '⚙', description: 'Механічна сила для швидкого видобутку.' },
   { key: 'suit', name: 'ТЕРМОКОСТЮМ', bonus: '+15% КЛІК', price: 1250, icon: '🧥', description: 'Зберігає тепло під час виходу на мороз.' },
-  { key: 'porridge', name: 'КАША З ОПИЛКАМИ', bonus: '+1 ВУГІЛЛЯ ЗА КЛІК', price: 150, icon: '🥣', description: 'Гаряча порція, що додає сил для видобутку.' }
+  { key: 'porridge', name: 'КАША З ОПИЛКАМИ', bonus: '+1 ВУГІЛЛЯ ЗА КЛІК', price: 150, icon: '🥣', description: 'Гаряча порція, що додає сил для видобутку.' },
+  { key: 'miner', name: 'ШАХТАР', bonus: '+1 АВТОДОХІД', price: 25, icon: '⛏', description: 'Новий працівник для вашої шахти. Купується без обмежень.' },
+  { key: 'compact', name: 'КОМПАКТНА ШАХТА', bonus: '+5 МІСЦЬ', price: 150, icon: '▦', description: 'Розширює шахту та відкриває місця для працівників.' },
+  { key: 'reinforced', name: 'ПОСИЛЕНА ШАХТА', bonus: '+10 МІСЦЬ', price: 450, icon: '▦', description: 'Міцні кріплення дозволяють заглибитися ще далі.' },
+  { key: 'industrial', name: 'ПРОМИСЛОВА ШАХТА', bonus: '+25 МІСЦЬ', price: 1200, icon: '▦', description: 'Велике розширення для міста, що росте.' },
+  { key: 'automaton', name: 'АВТОМАТОН', bonus: 'АВТОКЛІК 1 / С', price: 5000, icon: '⚙', description: 'Механічний працівник копає руду замість вас.' }
 ];
 
 const els = {
@@ -39,26 +58,37 @@ const els = {
   mineEfficiencyLabel: document.getElementById('mineEfficiencyLabel'),
   mineProgressBar: document.getElementById('mineProgressBar'),
   minersInfo: document.getElementById('minersInfo'),
+  generatorStatus: document.getElementById('generatorStatus'),
+  generatorToggleBtn: document.getElementById('generatorToggleBtn'),
+  hireMinerBtn: document.getElementById('hireMinerBtn'),
+  coalBurnLabel: document.getElementById('coalBurnLabel'),
+  populationHud: document.getElementById('populationHud'),
+  cityMap: document.getElementById('cityMap'),
+  cityWindHud: document.getElementById('cityWindHud'),
+  runTime: document.getElementById('runTime'),
+  runScore: document.getElementById('runScore'),
+  endRunBtn: document.getElementById('endRunBtn'),
   coalClicker: document.getElementById('coalClicker'),
-  mineUpgradeBtn: document.getElementById('mineUpgradeBtn'),
   sellCoalBtn: document.getElementById('sellCoalBtn'),
-  soundToggle: document.getElementById('soundToggle'),
+  sellPercent: document.getElementById('sellPercent'),
+  sellPercentValue: document.getElementById('sellPercentValue'),
   equipmentGrid: document.getElementById('equipmentGrid'),
   equipmentPrev: document.getElementById('equipmentPrev'),
   equipmentNext: document.getElementById('equipmentNext'),
   cityTemp: document.getElementById('cityTemp'),
   cityCondition: document.getElementById('cityCondition'),
   cityWind: document.getElementById('cityWind'),
-  cityFeels: document.getElementById('cityFeels')
+  cityFeels: document.getElementById('cityFeels'),
+  heroGeneratorStatus: document.getElementById('heroGeneratorStatus')
 };
 
 let state = loadState();
-let audioCtx = null;
 let scenes = [];
 let navLinks = [];
 let rafPending = false;
 let reducedMotion = false;
 let equipmentIndex = 0;
+let offlineSeconds = 0;
 
 function cloneObject(value) {
   return JSON.parse(JSON.stringify(value));
@@ -73,6 +103,8 @@ function loadState() {
     return {
       ...cloneObject(defaultState),
       ...parsed,
+      minerHireCost: parsed.minerHireCost || 25,
+      mineCapacity: parsed.mineCapacity || INITIAL_MINE_CAP,
       equipment: {
         gloves: { ...cloneObject(defaultState.equipment.gloves), ...(se.gloves || {}) },
         shovel: { ...cloneObject(defaultState.equipment.shovel), ...(se.shovel || {}) },
@@ -97,43 +129,65 @@ function getCoalPerClick() {
   const itemBonus = Object.values(state.equipment).reduce(function (sum, item) {
     return sum + (item.owned ? item.bonus : 0);
   }, 0);
-  const minerBoost = 1 + (state.miners / MINE_CAP) * 0.8;
+  const minerBoost = 1 + (state.miners / state.mineCapacity) * 0.8;
   return state.coalPerClick * (1 + itemBonus) * minerBoost;
 }
 
 function getMineEfficiencyPercent() {
-  return Math.min(100, Math.round((state.miners / MINE_CAP) * 100));
+  return Math.min(100, Math.round((state.miners / state.mineCapacity) * 100));
 }
 
 function getMineProgressWidth() {
-  return Math.min(100, (state.miners / MINE_CAP) * 100) + '%';
+  return Math.min(100, (state.miners / state.mineCapacity) * 100) + '%';
 }
 
-function playTone(type) {
-  if (!state.soundOn) return;
-  const AudioCtor = window.AudioContext || window.webkitAudioContext;
-  if (!AudioCtor) return;
-  if (!audioCtx) audioCtx = new AudioCtor();
-  const osc = audioCtx.createOscillator();
-  const gain = audioCtx.createGain();
-  osc.connect(gain);
-  gain.connect(audioCtx.destination);
-  const now = audioCtx.currentTime;
-  if (type === 'click') {
-    osc.type = 'triangle';
-    osc.frequency.setValueAtTime(110, now);
-    gain.gain.setValueAtTime(0.0001, now);
-    gain.gain.exponentialRampToValueAtTime(0.12, now + 0.01);
-    gain.gain.exponentialRampToValueAtTime(0.0001, now + 0.12);
-  } else {
-    osc.type = 'sawtooth';
-    osc.frequency.setValueAtTime(60, now);
-    gain.gain.setValueAtTime(0.0001, now);
-    gain.gain.exponentialRampToValueAtTime(0.08, now + 0.02);
-    gain.gain.exponentialRampToValueAtTime(0.0001, now + 0.25);
+function getTargetMiners() {
+  return Math.min(state.mineCapacity, Math.floor(state.population / 16));
+}
+
+function renderCityMap() {
+  if (!els.cityMap) return;
+  const population = Math.max(1, state.population);
+  const mapRadius = Math.min(window.innerWidth * 0.86, 920) / 2;
+  const homes = Math.min(72, 8 + Math.floor(population / 4));
+  const industrial = Math.min(28, Math.max(2, Math.floor(population / 18)));
+  const ringCount = Math.min(4, Math.max(1, Math.ceil(homes / 14)));
+  const fragments = [];
+
+  let remainingHomes = homes;
+  for (let ring = 0; ring < ringCount; ring += 1) {
+    const perRing = Math.min(18, Math.ceil(remainingHomes / (ringCount - ring)));
+    const radius = 24 + ring * 14;
+    for (let index = 0; index < perRing; index += 1) {
+      const angle = index * (360 / perRing) + (ring % 2 ? 360 / perRing / 2 : 0);
+      const distance = Math.round(mapRadius * radius / 100);
+      const level = population >= 240 && ring < 2 ? 3 : population >= 150 && ring < 2 ? 2 : 1;
+      fragments.push('<i class="city-building city-home level-' + level + '" style="--angle:' + angle + 'deg;--distance:' + distance + 'px"></i>');
+    }
+    remainingHomes -= perRing;
   }
-  osc.start(now);
-  osc.stop(now + 0.25);
+
+  for (let index = 0; index < industrial; index += 1) {
+    const angle = index * (360 / industrial) + 9;
+    const radius = 75 + ((index * 5) % 10);
+    const distance = Math.round(mapRadius * radius / 100);
+    fragments.push('<i class="city-building city-industry" style="--angle:' + angle + 'deg;--distance:' + distance + 'px"></i>');
+  }
+
+  els.cityMap.innerHTML = fragments.join('');
+  els.cityMap.dataset.population = population;
+}
+
+function getWeatherBurnRate() {
+  const weather = window.currentWeather;
+  if (!weather) return 1;
+  return 1 + Math.max(0, (Math.abs(weather.temp) - 50) / 250) + Math.max(0, weather.wind - 10) / 100;
+}
+
+function formatRunTime(seconds) {
+  const minutes = Math.floor(seconds / 60);
+  const remainder = seconds % 60;
+  return String(minutes).padStart(2, '0') + ':' + String(remainder).padStart(2, '0');
 }
 
 function createFloatingText(x, y, value) {
@@ -147,24 +201,28 @@ function createFloatingText(x, y, value) {
 }
 
 function renderEquipment() {
+  if (!els.equipmentGrid) return;
   els.equipmentGrid.innerHTML = '';
   equipList.forEach(function (item) {
     const card = document.createElement('article');
     card.className = 'equipment-card';
-    const owned = item.key === 'porridge' ? state.porridgeOwned : state.equipment[item.key].owned;
+    const repeatable = item.key === 'miner' || Boolean(state.mineUpgrades[item.key]);
+    const count = item.key === 'miner' ? state.totalHired : item.key === 'compact' || item.key === 'reinforced' || item.key === 'industrial' ? state.mineUpgrades[item.key] : 0;
+    const owned = item.key === 'porridge' ? state.porridgeOwned : item.key === 'automaton' ? state.automatonOwned : item.key in state.equipment ? state.equipment[item.key].owned : false;
+    const price = item.key === 'miner' ? state.minerHireCost : repeatable ? Math.round(item.price * Math.pow(1.35, count)) : item.price;
     const button = document.createElement('button');
     button.type = 'button';
     button.className = 'equipment-button';
-    button.textContent = owned ? 'КУПЛЕНО' : 'КУПИТИ';
-    button.disabled = owned;
+    button.textContent = repeatable ? 'КУПИТИ' : owned ? 'КУПЛЕНО' : 'КУПИТИ';
+    button.disabled = !repeatable && owned;
     button.addEventListener('click', function () { buyEquipment(item.key); });
     card.dataset.position = getEquipmentPosition(equipList.indexOf(item));
     card.innerHTML =
       '<div class="equipment-icon" aria-hidden="true"><span>' + item.icon + '</span></div>' +
       '<h4>' + item.name + '</h4>' +
       '<p class="equipment-description">' + item.description + '</p>' +
-      '<div class="bonus">' + item.bonus + '</div>' +
-      '<div class="price"><span>ЦІНА</span><strong>' + formatNumber(item.price) + '</strong></div>';
+      '<div class="bonus">' + item.bonus + (repeatable && count ? ' · ' + count + '×' : '') + '</div>' +
+      '<div class="price"><span>ЦІНА</span><strong>' + formatNumber(price) + '</strong></div>';
     card.appendChild(button);
     els.equipmentGrid.appendChild(card);
   });
@@ -184,25 +242,34 @@ function moveEquipment(step) {
   Array.from(els.equipmentGrid.children).forEach(function (card, index) {
     card.dataset.position = getEquipmentPosition(index);
   });
-  playTone('click');
 }
 
 function updateHud() {
+  const sellPercent = Math.min(100, Math.max(1, Number(state.sellPercent) || 100));
+  if (els.sellPercent) els.sellPercent.value = String(sellPercent);
+  if (els.sellPercentValue) els.sellPercentValue.textContent = sellPercent + '%';
   els.coalCount.textContent = formatNumber(state.coal);
   els.thermoCount.textContent = formatNumber(state.stamps);
   els.coalPerClickLabel.textContent = '+' + Math.max(1, Math.round(getCoalPerClick()));
   els.mineEfficiencyLabel.textContent = getMineEfficiencyPercent() + '%';
   els.mineProgressBar.style.width = getMineProgressWidth();
-  els.minersInfo.textContent = state.miners + ' / ' + MINE_CAP;
-  els.soundToggle.textContent = state.soundOn ? '🔊 ЗВУК' : '🔇 ЗВУК';
-  els.mineUpgradeBtn.textContent = 'ПОЛІПШИТИ (' + formatNumber(state.minerUpgradeCost) + ')';
-  els.mineUpgradeBtn.disabled = state.coal < state.minerUpgradeCost;
+  els.minersInfo.textContent = state.miners + ' / ' + state.mineCapacity;
+  els.generatorStatus.textContent = state.generatorOn ? 'ГЕНЕРАТОР ПРАЦЮЄ' : 'ГЕНЕРАТОР ВИМКНЕНО';
+  els.generatorToggleBtn.classList.toggle('is-on', state.generatorOn);
+  document.getElementById('generator').classList.toggle('generator-off', !state.generatorOn);
+  if (els.heroGeneratorStatus) els.heroGeneratorStatus.textContent = state.generatorOn ? 'ГЕНЕРАТОР АКТИВНИЙ' : 'ГЕНЕРАТОР ВИМКНЕНО';
+  els.generatorToggleBtn.disabled = !state.generatorOn && state.coal <= 0;
+  els.coalBurnLabel.textContent = getWeatherBurnRate().toFixed(2) + ' / с';
+  els.populationHud.textContent = state.population;
+  renderCityMap();
+  els.runTime.textContent = formatRunTime(state.runSeconds);
+  els.runScore.textContent = formatNumber(state.runScore);
+  els.endRunBtn.disabled = state.runSeconds === 0;
 }
 
 function mineCoal(event) {
   const perClick = getCoalPerClick();
   state.coal += perClick;
-  playTone('click');
   if (event) {
     const rect = event.currentTarget.getBoundingClientRect();
     createFloatingText(rect.left + rect.width / 2, rect.top + rect.height / 2, '+' + Math.max(1, Math.round(perClick)));
@@ -218,22 +285,108 @@ function mineCoal(event) {
 }
 
 function sellCoal() {
-  const saleValue = Math.floor(state.coal / SELL_RATE);
+  const percent = Math.min(100, Math.max(0, Number(state.sellPercent) || 100));
+  const coalToSell = Math.floor((state.coal * percent) / 100);
+  const saleValue = Math.floor(coalToSell / SELL_RATE);
   if (saleValue <= 0) return;
-  state.coal -= saleValue * SELL_RATE;
+  const actualCoalSold = saleValue * SELL_RATE;
+  state.coal -= actualCoalSold;
   state.stamps += saleValue;
-  playTone('sell');
+  state.totalSold += actualCoalSold;
+  state.runScore += saleValue * 2;
   saveState();
   updateHud();
 }
 
 function buyMineUpgrade() {
-  if (state.coal < state.minerUpgradeCost) return;
-  state.coal -= state.minerUpgradeCost;
+  if (state.coal < state.mineUpgradeCost) return;
+  state.coal -= state.mineUpgradeCost;
+  state.mineCapacity += 5;
+  state.mineUpgradeCost = Math.round(state.mineUpgradeCost * 1.65);
+  state.runScore += 50;
+  saveState();
+  updateHud();
+}
+
+function hireMiner() {
+  if (state.stamps < state.minerHireCost || state.miners >= state.mineCapacity || state.population <= state.miners) return;
+  state.stamps -= state.minerHireCost;
   state.miners += 1;
-  state.minerUpgradeCost = Math.round(state.minerUpgradeCost * 1.42);
-  state.coalPerClick += 0.3;
-  playTone('upgrade');
+  state.totalHired += 1;
+  state.minerHireCost = Math.round(state.minerHireCost * 1.18);
+  state.runScore += 25;
+  saveState();
+  updateHud();
+}
+
+function toggleGenerator() {
+  if (!state.generatorOn && state.coal <= 0) return;
+  state.generatorOn = !state.generatorOn;
+  saveState();
+  updateHud();
+}
+
+function endRun() {
+  if (!state.runSeconds) return;
+  const finalScore = state.runScore + state.population * 10 + state.totalSold + state.totalHired * 25;
+  state.lastRun = {
+    seconds: state.runSeconds,
+    score: finalScore,
+    population: state.population,
+    miners: state.miners,
+    sold: state.totalSold
+  };
+  state.completedRuns += 1;
+  state.generatorOn = false;
+  state.coal = 250;
+  state.stamps = 0;
+  state.miners = 0;
+  state.minerHireCost = 25;
+  state.mineCapacity = INITIAL_MINE_CAP;
+  state.mineUpgradeCost = 150;
+  state.runSeconds = 0;
+  state.cityLevel = 1;
+  state.population = 80;
+  state.populationCap = 80;
+  state.miners = 5;
+  state.runScore = 0;
+  state.totalSold = 0;
+  state.totalHired = 0;
+  saveState();
+  updateHud();
+  window.alert('Забіг завершено. Рахунок: ' + formatNumber(finalScore) + '. Час роботи: ' + formatRunTime(state.lastRun.seconds));
+}
+
+function gameTick() {
+  if (!state.generatorOn) {
+    offlineSeconds += 1;
+    if (offlineSeconds % 12 === 0 && state.population > 0) {
+      state.population -= 1;
+      state.populationCap = Math.max(state.population, state.populationCap - 1);
+      state.miners = Math.min(state.miners, state.population);
+      saveState();
+      updateHud();
+    }
+    return;
+  }
+  offlineSeconds = 0;
+  const burn = getWeatherBurnRate();
+  state.coal = Math.max(0, state.coal - burn);
+  state.runSeconds += 1;
+  state.runScore += 1;
+  if (state.automatonOwned) state.coal += getCoalPerClick();
+  if (state.miners > 0) state.coal += state.miners * 0.18;
+  if (state.runSeconds % 20 === 0 && state.population < state.populationCap) {
+    state.population += 1;
+    const targetMiners = getTargetMiners();
+    if (state.miners < targetMiners) state.miners = targetMiners;
+  }
+  if (state.runSeconds % 45 === 0) {
+    state.cityLevel += 1;
+    state.populationCap += 5;
+    state.runScore += 100;
+  }
+  if (state.coal <= 0) state.generatorOn = false;
   saveState();
   updateHud();
 }
@@ -243,22 +396,48 @@ function buyPorridge() {
   state.stamps -= 150;
   state.porridgeOwned = true;
   state.coalPerClick += 1;
-  playTone('upgrade');
   saveState();
   renderEquipment();
   updateHud();
 }
 
 function buyEquipment(key) {
+  if (key === 'miner') {
+    hireMiner();
+    return;
+  }
+  if (key === 'compact' || key === 'reinforced' || key === 'industrial') {
+    const item = equipList.find(function (entry) { return entry.key === key; });
+    const price = Math.round(item.price * Math.pow(1.35, state.mineUpgrades[key]));
+    if (state.stamps < price) return;
+    state.stamps -= price;
+    state.mineUpgrades[key] += 1;
+    const capacityBonus = key === 'compact' ? 5 : key === 'reinforced' ? 10 : 25;
+    state.mineCapacity += capacityBonus;
+    state.runScore += capacityBonus * 10;
+    saveState();
+    renderEquipment();
+    updateHud();
+    return;
+  }
   if (key === 'porridge') {
     buyPorridge();
+    return;
+  }
+  if (key === 'automaton') {
+    if (state.automatonOwned || state.stamps < 5000) return;
+    state.stamps -= 5000;
+    state.automatonOwned = true;
+    state.runScore += 500;
+    saveState();
+    renderEquipment();
+    updateHud();
     return;
   }
   const item = state.equipment[key];
   if (!item || item.owned || state.stamps < item.price) return;
   state.stamps -= item.price;
   item.owned = true;
-  playTone('upgrade');
   saveState();
   renderEquipment();
   updateHud();
@@ -273,21 +452,55 @@ function confirmReset() {
 }
 
 function setupResetButton() {
-  const gearSection = document.querySelector('.gear-section');
-  if (!gearSection) return;
+  const actionDock = document.createElement('div');
+  actionDock.className = 'run-action-dock';
+  const scoreDisplay = document.createElement('div');
+  scoreDisplay.className = 'run-score';
+  scoreDisplay.innerHTML = '<span>РАХУНОК ЗАБІГУ</span><strong id="runScore">0</strong>';
+  els.runScore = scoreDisplay.querySelector('#runScore');
+  const endRunButton = document.createElement('button');
+  endRunButton.type = 'button';
+  endRunButton.className = 'action-button ghost-button';
+  endRunButton.textContent = 'ЗАВЕРШИТИ ЗАБІГ';
+  endRunButton.addEventListener('click', endRun);
+  els.endRunBtn = endRunButton;
   const resetButton = document.createElement('button');
   resetButton.type = 'button';
   resetButton.className = 'action-button ghost-button reset-button';
   resetButton.textContent = 'СКИНУТИ ПРОГРЕС';
   resetButton.addEventListener('click', confirmReset);
-  document.body.appendChild(resetButton);
+  actionDock.appendChild(scoreDisplay);
+  actionDock.appendChild(endRunButton);
+  actionDock.appendChild(resetButton);
+  document.body.appendChild(actionDock);
 }
 
-function setupSoundToggle() {
-  els.soundToggle.addEventListener('click', function () {
-    state.soundOn = !state.soundOn;
-    saveState();
-    updateHud();
+function initCityVideo() {
+  const video = document.querySelector('.city-video');
+  if (!video) return;
+  let direction = 1;
+  let frameId = 0;
+
+  video.removeAttribute('loop');
+  video.addEventListener('ended', function () {
+    direction = -1;
+    video.pause();
+    reverseVideo();
+  });
+
+  function reverseVideo() {
+    if (direction !== -1 || video.currentTime <= 0.03) {
+      video.currentTime = 0;
+      direction = 1;
+      video.play();
+      return;
+    }
+    video.currentTime = Math.max(0, video.currentTime - 0.035);
+    frameId = requestAnimationFrame(reverseVideo);
+  }
+
+  video.addEventListener('play', function () {
+    if (direction === 1) cancelAnimationFrame(frameId);
   });
 }
 
@@ -458,10 +671,12 @@ async function fetchWeatherData() {
 
 function initializeWeatherUi() {
   fetchWeatherData().then(function (weather) {
+    window.currentWeather = weather.city;
     var city = weather.city;
     els.cityTemp.textContent = city.temp + '°C';
     els.cityCondition.textContent = city.condition;
     els.cityWind.textContent = 'ВІТЕР: ' + city.wind + ' м/с';
+    els.cityWindHud.textContent = city.wind + ' м/с';
     els.cityFeels.textContent = 'ВІДЧУВАЄТЬСЯ ЯК: ' + city.feelsLike + '°C';
     var nodes = document.querySelectorAll('.weather-panel-city .forecast-item strong');
     city.hourly.forEach(function (value, index) {
@@ -565,13 +780,21 @@ function initLiveClock() {
 }
 
 function bindEvents() {
-  els.coalClicker.addEventListener('click', mineCoal);
-  els.sellCoalBtn.addEventListener('click', sellCoal);
-  els.mineUpgradeBtn.addEventListener('click', buyMineUpgrade);
-  setupSoundToggle();
+  if (els.coalClicker) els.coalClicker.addEventListener('click', mineCoal);
+  if (els.generatorToggleBtn) els.generatorToggleBtn.addEventListener('click', toggleGenerator);
+  if (els.sellCoalBtn) els.sellCoalBtn.addEventListener('click', sellCoal);
+  if (els.sellPercent) {
+    els.sellPercent.addEventListener('input', function () {
+      state.sellPercent = Number(els.sellPercent.value);
+      saveState();
+      updateHud();
+    });
+  }
   setupResetButton();
-  els.equipmentPrev.addEventListener('click', function () { moveEquipment(-1); });
-  els.equipmentNext.addEventListener('click', function () { moveEquipment(1); });
+  if (els.equipmentPrev && els.equipmentNext) {
+    els.equipmentPrev.addEventListener('click', function () { moveEquipment(-1); });
+    els.equipmentNext.addEventListener('click', function () { moveEquipment(1); });
+  }
 }
 
 function initialize() {
@@ -584,6 +807,7 @@ function initialize() {
   updatePlanetParallax();
   initSnow();
   initLiveClock();
+  initCityVideo();
 }
 
 initialize();
@@ -591,11 +815,6 @@ initialize();
 window.addEventListener('scroll', onScrollOrResize, { passive: true });
 window.addEventListener('resize', onScrollOrResize, { passive: true });
 
-setInterval(function () {
-  var passiveIncome = Math.max(1, Math.round(state.miners * 0.18 + (state.porridgeOwned ? 1 : 0)));
-  state.coal += passiveIncome;
-  saveState();
-  updateHud();
-}, 1500);
+setInterval(gameTick, 1000);
 
 window.addEventListener('beforeunload', saveState);

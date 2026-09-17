@@ -13,36 +13,48 @@
   <div class="noise" aria-hidden="true"></div>
   <div class="scanlines" aria-hidden="true"></div>
   <canvas id="snowCanvas" class="snow-canvas" aria-hidden="true"></canvas>
-  <button class="sound-toggle" id="soundToggle" type="button">🔊 ЗВУК</button>
   <nav class="top-nav">
     <a href="#generator">ГЕНЕРАТОР</a>
     <a href="#shaft">ШАХТА</a>
     <a href="#kitchen">КУХНЯ</a>
-    <a href="#kitchen">СПОРЯДЖЕННЯ</a>
     <a href="#city">МІСТО</a>
-    <a href="#planets">МАРС</a>
-    <a href="#planets">МІСЯЦЬ</a>
+    <a href="#space">КОСМОС</a>
   </nav>
   <main class="page-shell">
     <section id="generator" class="hero-scene scene">
       <div class="scene-bg hero-backdrop"></div>
-      <div class="generator-core" aria-hidden="true">
-        <div class="core-ring core-ring-1"></div>
-        <div class="core-ring core-ring-2"></div>
-        <div class="core-ring core-ring-3"></div>
-        <div class="core-glow"></div>
+      <button class="generator-core generator-control" id="generatorToggleBtn" type="button" aria-label="Увімкнути або вимкнути генератор">
+        <span class="generator-shadow" aria-hidden="true"></span>
+        <span class="generator-stack" aria-hidden="true"><i></i><i></i><i></i></span>
+        <span class="generator-body" aria-hidden="true">
+          <span class="generator-cap"></span>
+          <span class="generator-window"><span class="generator-fire"></span></span>
+          <span class="generator-vent generator-vent-left"></span>
+          <span class="generator-vent generator-vent-right"></span>
+          <span class="generator-base"></span>
+        </span>
+        <span class="generator-control-label" id="generatorStatus" aria-hidden="true"></span>
+      </button>
+      <div class="snowy-landscape" aria-hidden="true">
+        <div class="ice-crater">
+          <span class="ice-crater-rim ice-crater-rim-outer"></span>
+          <span class="ice-crater-rim ice-crater-rim-inner"></span>
+          <span class="ice-crater-floor"></span>
+        </div>
+        <div class="city-map" id="cityMap"></div>
       </div>
       <div class="steam-layer" aria-hidden="true"></div>
       <div class="scene-content">
         <div class="hud-panel">
           <div class="hud-item"><span>ТЕМПЕРАТУРА</span><strong class="temp-flicker">-76°C</strong></div>
-          <div class="hud-item"><span>ДЕНЬ</span><strong>34</strong></div>
           <div class="hud-item"><span>ЧАС</span><strong id="liveClock">06:00</strong></div>
+          <div class="hud-item"><span>ВІТЕР</span><strong id="cityWindHud">18 м/с</strong></div>
+          <div class="hud-item"><span>НАСЕЛЕННЯ</span><strong id="populationHud">10</strong></div>
         </div>
         <div class="hero-title">
           <h1 data-text="FROSTPUNK">FROSTPUNK</h1>
           <p>COAL HIVE</p>
-          <div class="hero-status"><span class="status-dot"></span><span>ГЕНЕРАТОР АКТИВНИЙ</span></div>
+          <div class="hero-status"><span class="status-dot"></span><span id="heroGeneratorStatus">ГЕНЕРАТОР ВИМКНЕНО</span></div>
         </div>
       </div>
     </section>
@@ -50,7 +62,10 @@
     <section id="shaft" class="section mine-section scene">
       <div class="scene-bg mine-visual"></div>
       <div class="embers" aria-hidden="true"></div>
-      <div class="scene-content">
+      <div class="scene-content mine-layout">
+        <div class="mine-image-panel" aria-hidden="true">
+          <img class="mine-image" src="static/images/mine.jpg" alt="" />
+        </div>
         <div class="mine-panel">
           <div class="section-label">ВУГІЛЬНА ШАХТА</div>
           <div class="section-subtitle">КЛІКАЙ ВУГІЛЛЯ</div>
@@ -59,15 +74,20 @@
             <span class="coal-glow"></span>
             <span class="coal-ring"></span>
           </button>
-          <div class="resource-line"><span>ВУГІЛЛЯ</span><strong id="coalCount">0</strong></div>
+          <div class="resource-line"><span>ВУГІЛЛЯ</span><strong id="coalCount">250</strong></div>
           <div class="resource-line small"><span>ЗА КЛІК</span><strong id="coalPerClickLabel">+1</strong></div>
+          <div class="generator-status"><span>ЧАС ЗАБІГУ</span><strong id="runTime">00:00</strong></div>
           <div class="mine-efficiency">
             <div class="efficiency-top"><span>ЕФЕКТИВНІСТЬ ШАХТИ</span><strong id="mineEfficiencyLabel">0%</strong></div>
             <div class="progress-bar"><span id="mineProgressBar"></span></div>
           </div>
-          <div class="miners-row"><span>ШАХТАРІ</span><strong id="minersInfo">0 / 30</strong></div>
-          <button class="action-button primary-button" id="mineUpgradeBtn" type="button">ПОЛІПШИТИ</button>
+          <div class="miners-row"><span>ШАХТАРІ</span><strong id="minersInfo">0 / 5</strong></div>
+          <div class="weather-load"><span>ВИТРАТА ЗА ПОГОДОЮ</span><strong id="coalBurnLabel">1.00 / с</strong></div>
           <div class="sell-wrap">
+            <div class="sell-config">
+              <label for="sellPercent" class="sell-config-label">ПРОДАЖ: <span id="sellPercentValue">100%</span></label>
+              <input id="sellPercent" class="sell-range" type="range" min="1" max="100" value="100" aria-label="Відсоток вугілля для продажу" />
+            </div>
             <button class="action-button ghost-button" id="sellCoalBtn" type="button">ПРОДАТИ ВУГІЛЛЯ</button>
             <div class="stamps-display"><span>ТЕРМОШТАМПИ</span><strong id="thermoCount">0</strong></div>
           </div>
@@ -79,12 +99,17 @@
       <div class="scene-bg kitchen-visual gear-visual" aria-hidden="true"></div>
       <div class="scene-content combined-upgrades">
         <div class="gear-panel">
-          <div class="section-label small">СПОРЯДЖЕННЯ</div>
-          <div class="equipment-carousel" aria-label="Вибір спорядження">
-            <button class="carousel-arrow carousel-arrow-prev" id="equipmentPrev" type="button" aria-label="Попередній предмет">&#8249;</button>
+          <div class="section-label small">КУХНЯ ТА ПОКРАЩЕННЯ</div>
+          <div class="equipment-carousel" aria-label="Покращення колонії">
+            <button class="carousel-arrow carousel-arrow-prev" id="equipmentPrev" type="button" aria-label="Попереднє покращення">&#8249;</button>
             <div class="equipment-carousel-stage" id="equipmentGrid"></div>
-            <button class="carousel-arrow carousel-arrow-next" id="equipmentNext" type="button" aria-label="Наступний предмет">&#8250;</button>
+            <button class="carousel-arrow carousel-arrow-next" id="equipmentNext" type="button" aria-label="Наступне покращення">&#8250;</button>
           </div>
+        </div>
+        <div class="gear-video-panel" aria-hidden="true">
+          <video class="gear-video" autoplay muted loop playsinline preload="metadata">
+            <source src="static/media/kitchen.mp4" type="video/mp4" />
+          </video>
         </div>
       </div>
     </section>
@@ -117,10 +142,10 @@
       </div>
     </section>
 
-    <section id="planets" class="section planet-section scene">
-      <div class="scene-bg planet-bg mars-bg"></div>
+    <section id="space" class="section space-section scene">
+      <div class="scene-bg space-visual"></div>
       <div class="scene-content planet-pair">
-        <div id="mars" class="planet-card">
+        <div class="planet-card" id="mars">
           <div class="planet planet-mars" role="img" aria-label="Марс"></div>
           <div class="weather-panel weather-panel-planet">
             <header>ПРОГНОЗ ПОГОДИ: МАРС</header>
@@ -136,7 +161,7 @@
             </div>
           </div>
         </div>
-        <div id="moon" class="planet-card">
+        <div class="planet-card" id="moon">
           <div class="planet planet-moon" role="img" aria-label="Місяць"></div>
           <div class="weather-panel weather-panel-planet">
             <header>ПРОГНОЗ ПОГОДИ: МІСЯЦЬ</header>
