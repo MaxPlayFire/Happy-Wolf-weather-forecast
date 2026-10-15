@@ -80,7 +80,11 @@ const els = {
   cityFeels: document.getElementById('cityFeels'),
   heroGeneratorStatus: document.getElementById('heroGeneratorStatus')
 };
-
+const btncoal = document.querySelector("coalClicker")
+btncoal.addEventListener('click', () => {
+    gtag('event', 'order_button_clicked');
+    console.log('Дані відправлено!');
+});
 let state = loadState();
 let scenes = [];
 let navLinks = [];
